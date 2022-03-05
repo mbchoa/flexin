@@ -1,4 +1,4 @@
-# flexin [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
+# 💪 flexin [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 
 A PWA for daily tracking and progress of a 30-day pushup routine.
 
