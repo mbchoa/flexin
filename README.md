@@ -1,8 +1,26 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# flexin [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
+
+A PWA for daily tracking and progress of a 30-day pushup routine.
 
 ## Getting Started
 
-First, run the development server:
+### **`.env`**
+
+Copy the `.env.example` file to an `.env` file at the root of the directory.
+
+### **Services**
+
+First, let's spin up containers for a Postgres DB and a fake SMTP server. The SMTP server is used for the passwordless login via email:
+
+```bash
+docker-compose up -d
+```
+
+Let's also open up a new browser tab at http://localhost:3080. This is the SMTP email client interface we'll use to receive emails outgoing from the application.
+
+### **Next.js**
+
+Next, let's spin up our Next.js app
 
 ```bash
 npm run dev
@@ -10,25 +28,22 @@ npm run dev
 yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) with your browser.
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+### **Authenticating**
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+This app has an authentication wall and so you will be directed to the signin page and asked for an email. Enter the email and submit, you'll be navigated to a verification email request page. Navigating back to the SMTP email client tab, you should now see a new email. The signin link in the email will allow you to authenticate and navigate to the homepage of the application.
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+## Tech Stack
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- Next.js: React framework
+- NextAuth.js: authentication for Next.js
+- Prisma: database ORM
+- Postgres: our database
+- Nodemailer: email client
+- Tailwind: CSS framework
+- TypeScript: typing system
+- ESLint: JavaScript linter
+- Prettier: code formatter
+- Husky: git hooks for pre-commit linting, testing
+- Commitizen: CLI for enforcing commit message conventions
