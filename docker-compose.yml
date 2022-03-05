@@ -1,0 +1,14 @@
+version: '3'
+services:
+  database:
+    image: 'postgres:14-alpine'
+    restart: 'always'
+    environment:
+      POSTGRES_PASSWORD: flexin
+    ports:
+      - '5432:5432'
+  smtp:
+    image: 'rnwood/smtp4dev'
+    ports:
+      - '3080:80'
+      - '2525:25'
