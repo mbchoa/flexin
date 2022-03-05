@@ -18,6 +18,16 @@ docker-compose up -d
 
 Let's also open up a new browser tab at http://localhost:3080. This is the SMTP email client interface we'll use to receive emails outgoing from the application.
 
+### **Prisma**
+
+We'll need to generate the Prisma client so let's run a migration using the initial migration file to setup our Postgres DB.
+
+```bash
+npx prisma migrate dev
+```
+
+Running this command will apply the initial migration to setup the database as well as generate the Prisma client that's used in the application.
+
 ### **Next.js**
 
 Next, let's spin up our Next.js app
