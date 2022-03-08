@@ -9,7 +9,7 @@ const Home: NextPage = () => {
         <title>flexin | A push-up a day</title>
       </Head>
 
-      <main>Content</main>
+      <main>Testing</main>
 
       <footer>Footer</footer>
     </div>
