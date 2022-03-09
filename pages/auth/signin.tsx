@@ -1,12 +1,11 @@
 import { useCallback, useState } from 'react';
 import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/router';
 import type { FormEvent } from 'react';
 import type { NextPage } from 'next';
 
 const SignIn: NextPage = () => {
-  // TODO: handle errors
-  // const { query } = useRouter();
-  // const { error } = query;
+  const router = useRouter();
 
   const [email, setEmail] = useState('');
   const handleEmailChange = useCallback(
@@ -19,10 +18,15 @@ const SignIn: NextPage = () => {
   const handleSubmit = useCallback(
     async (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault();
-      await signIn('email', { email });
-      localStorage.setItem('email', email);
+      try {
+        await signIn('email', { email, redirect: false });
+        localStorage.setItem('email', email);
+        router.push('/auth/verify-request');
+      } catch (e) {
+        router.push('/api/auth/error?error=AccessDenied');
+      }
     },
-    [email]
+    [email, router]
   );
 
   return (
