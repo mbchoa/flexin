@@ -4,56 +4,60 @@ import EmailProvider from 'next-auth/providers/email';
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
 import { createTransport } from 'nodemailer';
 import mjm2html from 'mjml';
+import type { NextApiRequest, NextApiResponse } from 'next';
 
 import { prisma } from 'lib/prisma';
 
-export default NextAuth({
-  adapter: PrismaAdapter(prisma),
-  // Configure one or more authentication providers
-  providers: [
-    EmailProvider({
-      server: {
-        host: process.env.EMAIL_SERVER_HOST,
-        port: parseInt(process.env.EMAIL_SERVER_PORT as string, 10),
-        auth: {
-          user: process.env.EMAIL_SERVER_USER,
-          pass: process.env.EMAIL_SERVER_PASSWORD,
+export default async function auth(req: NextApiRequest, res: NextApiResponse) {
+  return await NextAuth(req, res, {
+    adapter: PrismaAdapter(prisma),
+    // Configure one or more authentication providers
+    providers: [
+      EmailProvider({
+        server: {
+          host: process.env.EMAIL_SERVER_HOST,
+          port: parseInt(process.env.EMAIL_SERVER_PORT as string, 10),
+          auth: {
+            user: process.env.EMAIL_SERVER_USER,
+            pass: process.env.EMAIL_SERVER_PASSWORD,
+          },
         },
-      },
-      from: process.env.EMAIL_FROM,
-      maxAge: 60 * 5, // allow magic code to be valid for 5 minutes
-      async generateVerificationToken() {
-        return crypto.randomInt(100000, 999999).toString();
-      },
-      async sendVerificationRequest({
-        identifier: email,
-        token,
-        provider: { server, from },
-      }) {
-        const transport = createTransport(server);
-        const msg = {
-          to: email,
-          from: from as string,
-          subject: `Your flexin Account Code`,
-          text: text({ token }),
-          html: html({ token }),
-        };
-        try {
-          const response = await transport.sendMail(msg);
-          console.log(response);
-        } catch (e) {
-          // TODO: handle error
-          console.error(e);
-        }
-      },
-    }),
-    // ...add more providers here
-  ],
-  pages: {
-    signIn: '/auth/signin',
-    verifyRequest: '/auth/verify-request',
-  },
-});
+        from: process.env.EMAIL_FROM,
+        maxAge: 60 * 5, // allow magic code to be valid for 5 minutes
+        async generateVerificationToken() {
+          return crypto.randomInt(100000, 999999).toString();
+        },
+        async sendVerificationRequest({
+          identifier: email,
+          token,
+          provider: { server, from },
+        }) {
+          try {
+            const transport = createTransport(server);
+            const msg = {
+              to: email,
+              from: from as string,
+              subject: `Your flexin Account Code`,
+              text: text({ token }),
+              html: html({ token }),
+            };
+            await transport.sendMail(msg);
+          } catch (e: any) {
+            res.status(500).send({
+              message: (e as Error).message,
+              stack: (e as Error).stack,
+            });
+          }
+        },
+      }),
+      // ...add more providers here
+    ],
+    pages: {
+      signIn: '/auth/signin',
+      verifyRequest: '/auth/verify-request',
+    },
+  });
+}
 
 // Email HTML body
 function html({ token }: Record<'token', string>) {
