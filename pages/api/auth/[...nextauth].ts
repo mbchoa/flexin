@@ -12,7 +12,14 @@ export default NextAuth({
   // Configure one or more authentication providers
   providers: [
     EmailProvider({
-      server: process.env.EMAIL_SERVER,
+      server: {
+        host: process.env.EMAIL_SERVER_HOST,
+        port: parseInt(process.env.EMAIL_SERVER_PORT as string, 10),
+        auth: {
+          user: process.env.EMAIL_SERVER_USER,
+          pass: process.env.EMAIL_SERVER_PASSWORD,
+        },
+      },
       from: process.env.EMAIL_FROM,
       maxAge: 60 * 5, // allow magic code to be valid for 5 minutes
       async generateVerificationToken() {
@@ -23,22 +30,7 @@ export default NextAuth({
         token,
         provider: { server, from },
       }) {
-        const defaultTransportOptions = {
-          host: server as string,
-          pool: true,
-        };
-        const transport = createTransport(
-          process.env.NODE_ENV === 'development'
-            ? defaultTransportOptions
-            : {
-                ...defaultTransportOptions,
-                // StackOverflow suggestion: https://stackoverflow.com/questions/64470449/nodejs-nodemailer-sendgrid-smtp-username-password-to-api-key-using-existing
-                auth: {
-                  user: 'apikey',
-                  pass: process.env.SENDGRID_API_KEY,
-                },
-              }
-        );
+        const transport = createTransport(server);
         const msg = {
           to: email,
           from: from as string,
@@ -47,9 +39,11 @@ export default NextAuth({
           html: html({ token }),
         };
         try {
-          await transport.sendMail(msg);
+          const response = await transport.sendMail(msg);
+          console.log(response);
         } catch (e) {
           // TODO: handle error
+          console.error(e);
         }
       },
     }),
