@@ -43,10 +43,7 @@ export default async function auth(req: NextApiRequest, res: NextApiResponse) {
             };
             await transport.sendMail(msg);
           } catch (e: any) {
-            res.status(500).send({
-              message: (e as Error).message,
-              stack: (e as Error).stack,
-            });
+            console.error(e);
           }
         },
       }),
