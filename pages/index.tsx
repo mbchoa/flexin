@@ -8,10 +8,9 @@ const Home: NextPage = () => {
       <Head>
         <title>flexin | A push-up a day</title>
       </Head>
-
-      <main>Testing</main>
-
-      <footer>Footer</footer>
+      <main className="flex items-center justify-center h-screen flex-col">
+        <h1 className="text-2xl mb-2">Welcome to flexin</h1>
+      </main>
     </div>
   );
 };

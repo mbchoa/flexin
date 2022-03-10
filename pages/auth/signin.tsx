@@ -30,19 +30,37 @@ const SignIn: NextPage = () => {
   );
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="sign-in-email">Email</label>
-        <input
-          id="sign-in-email"
-          autoFocus
-          type="email"
-          name="email"
-          placeholder="email@example.com"
-          onChange={handleEmailChange}
-          value={email}
-        />
-        <button type="submit">Sign In</button>
+    <div className="flex items-center justify-center h-screen">
+      <form
+        className="bg-white shadow-md rounded px-8 pt-6 pb-8 flex flex-col"
+        onSubmit={handleSubmit}
+      >
+        <div className="mb-4">
+          <label
+            className="block text-grey-darker text-sm font-bold mb-2"
+            htmlFor="sign-in-email"
+          >
+            Email
+          </label>
+          <input
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker"
+            id="sign-in-email"
+            type="email"
+            name="email"
+            placeholder="email@example.com"
+            value={email}
+            onChange={handleEmailChange}
+            autoFocus
+          />
+        </div>
+        <div className="flex items-center justify-between">
+          <button
+            className="bg-blue-600 text-white font-bold py-2 px-4 rounded"
+            type="submit"
+          >
+            Sign In
+          </button>
+        </div>
       </form>
     </div>
   );

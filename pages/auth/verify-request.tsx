@@ -23,21 +23,37 @@ const VerifyRequest: NextPage = () => {
   );
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <label className="section-header" htmlFor="magic-code">
-          Code
-        </label>
-        <input
-          id="magic-code"
-          autoFocus
-          type="text"
-          name="magic-code"
-          value={code}
-          onChange={handleCodeChange}
-          placeholder="123456"
-        />
-        <button type="submit">Login</button>
+    <div className="flex items-center justify-center h-screen">
+      <form
+        className="bg-white shadow-md rounded px-8 pt-6 pb-8 flex flex-col"
+        onSubmit={handleSubmit}
+      >
+        <div className="mb-4">
+          <label
+            className="block text-grey-darker text-sm font-bold mb-2"
+            htmlFor="magic-code"
+          >
+            Code
+          </label>
+          <input
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-grey-darker"
+            id="magic-code"
+            type="text"
+            name="magic-code"
+            placeholder="123456"
+            value={code}
+            onChange={handleCodeChange}
+            autoFocus
+          />
+        </div>
+        <div className="flex items-center justify-between">
+          <button
+            className="bg-blue-600 text-white font-bold py-2 px-4 rounded"
+            type="submit"
+          >
+            Login
+          </button>
+        </div>
       </form>
     </div>
   );
