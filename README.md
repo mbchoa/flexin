@@ -4,7 +4,7 @@ A PWA for daily tracking and progress of a 30-day pushup routine.
 
 ## Getting Started
 
-### **`.env`**
+### **.env**
 
 Copy the `.env.example` file to an `.env` file at the root of the directory.
 
@@ -42,7 +42,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser.
 
 ### **Authenticating**
 
-This app has an authentication wall and so you will be directed to the signin page and asked for an email. Enter the email and submit, you'll be navigated to a verification email request page. Navigating back to the SMTP email client tab, you should now see a new email. The signin link in the email will allow you to authenticate and navigate to the homepage of the application.
+This app has an authentication wall and so you will be directed to the signin page and asked for an email. Enter the email and submit, you'll be navigated to a verification page asking for the one time code. Navigate back to the SMTP email client tab and open the email. The email will contain the code you need to enter on the verification page.
 
 ## Tech Stack
 
