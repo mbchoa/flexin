@@ -2,7 +2,7 @@ import { Html, Head, Main, NextScript } from 'next/document';
 
 export default function Document() {
   return (
-    <Html>
+    <Html lang="en">
       <Head>
         <meta name="description" content="Daily push-up challenge tracker" />
         <meta name="theme-color" content="#FFFFFF" />
