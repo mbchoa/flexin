@@ -43,8 +43,11 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image         String?
+
+  // Prisma relations
   accounts      Account[]
   sessions      Session[]
+  profile       Profile?
 }
 
 model VerificationToken {
@@ -53,4 +56,15 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Profile {
+  id            String    @id @default(cuid())
+  startDate     DateTime?
+  currentDay    Int       @default(0)
+  darkMode      Boolean   @default(false)
+
+  // foreign keys
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId        String    @default(cuid())
 }
