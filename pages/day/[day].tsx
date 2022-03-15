@@ -11,7 +11,7 @@ import { prisma } from 'lib/prisma';
 
 interface Props {
   profile: Profile;
-  workout?: Workout;
+  workout: Workout;
 }
 
 const WorkoutDay: NextPage<Props> = ({ profile, workout }) => {
@@ -60,7 +60,7 @@ const WorkoutDay: NextPage<Props> = ({ profile, workout }) => {
 
   const checkboxStateValues = Object.values(checkboxState);
   const isSubmitDisabled =
-    checkboxStateValues.length === 0 ||
+    checkboxStateValues.length < workout.sets.length ||
     checkboxStateValues.some((isChecked) => !isChecked);
 
   return (
