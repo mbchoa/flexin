@@ -10,7 +10,7 @@ const ProgressGrid = ({ currentDay }: Props) => {
       {[...new Array(30)].map((_, index) => {
         let color = 'bg-gray-300';
         if (index < currentDay) {
-          color = 'bg-green-300';
+          color = 'bg-green-400';
         }
         if (index === currentDay) {
           color = 'bg-green-300 animate-pulse';

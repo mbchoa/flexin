@@ -73,17 +73,19 @@ const WorkoutDay: NextPage<Props> = ({ profile, workout }) => {
           className="bg-white shadow-md rounded p-6 flex flex-col w-full max-w-xs space-y-4"
           onSubmit={handleSubmit}
         >
+          <h1 className="text-xl">Day {day}</h1>
           <div className="space-y-4">
             {workout?.sets.map((reps, index) => (
-              <div key={index}>
+              <div className="flex items-center" key={index}>
                 <input
+                  className="form-checkbox h-5 w-5"
                   type="checkbox"
                   id={`set-${index}`}
                   name={`set-${index}`}
                   checked={checkboxState[`set-${index}`]}
                   onChange={handleCheckboxChange}
                 />
-                <label className="px-4" htmlFor={`set-${index}`}>
+                <label className="px-4 text-lg" htmlFor={`set-${index}`}>
                   {renderRepsLabel(workout?.type, reps)}
                 </label>
               </div>
