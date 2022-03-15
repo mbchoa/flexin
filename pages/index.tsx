@@ -1,4 +1,4 @@
-import { FormEvent, useCallback } from 'react';
+import React, { FormEvent, useCallback, useState } from 'react';
 import type { NextPageContext, NextPage } from 'next';
 import Head from 'next/head';
 import { getSession } from 'next-auth/react';
@@ -15,8 +15,9 @@ interface Props {
 
 const Home: NextPage<Props> = ({ profile }) => {
   const router = useRouter();
+  const [currentDay, setCurrentDay] = useState(profile.currentDay);
 
-  const { currentDay, startDate } = profile;
+  const { startDate } = profile;
   const hasStartedRoutine = startDate && new Date(startDate) <= new Date();
 
   const handleSubmit = useCallback(
@@ -40,6 +41,19 @@ const Home: NextPage<Props> = ({ profile }) => {
     [currentDay, hasStartedRoutine, router, profile.id]
   );
 
+  const handleRestart = useCallback(async () => {
+    await fetch(`/api/profile/${profile.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        currentDay: 0,
+      }),
+    });
+    setCurrentDay(0);
+  }, [profile.id]);
+
   return (
     <div>
       <Head>
@@ -57,10 +71,17 @@ const Home: NextPage<Props> = ({ profile }) => {
           )}
           {hasStartedRoutine && <ProgressGrid currentDay={currentDay} />}
           <button
-            className="bg-blue-600 text-white font-bold py-2 px-4 rounded"
+            className="bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-500 transition-colors"
             type="submit"
           >
             {hasStartedRoutine ? 'Continue' : 'Start!'}
+          </button>
+          <button
+            className="bg-red-600 text-white font-bold py-2 px-4 rounded hover:bg-red-500 transition-colors"
+            type="button"
+            onClick={handleRestart}
+          >
+            Restart
           </button>
         </form>
       </main>

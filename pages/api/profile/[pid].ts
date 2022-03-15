@@ -8,7 +8,6 @@ export default async function handle(
   res: NextApiResponse
 ) {
   const profileId = req.query.pid as string;
-  const startDate = req.body.startDate;
 
   const session = await getSession({ req });
   if (!session) {
@@ -20,7 +19,7 @@ export default async function handle(
     case 'PUT': {
       const profile = await prisma.profile.update({
         where: { id: profileId },
-        data: { startDate },
+        data: req.body,
       });
       res.json(profile);
       break;

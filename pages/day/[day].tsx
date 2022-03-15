@@ -1,16 +1,20 @@
 import { ChangeEvent, FormEvent, useCallback, useState } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
+import { getSession } from 'next-auth/react';
+import { Profile } from '@prisma/client';
 
 import { ROUTINE_SCHEDULE, PLANK, PUSHUP } from '../../constants';
 import { NextPage, NextPageContext } from 'next';
 import { Exercise, Workout } from 'index';
+import { prisma } from 'lib/prisma';
 
 interface Props {
+  profile: Profile;
   workout?: Workout;
 }
 
-const WorkoutDay: NextPage<Props> = ({ workout }) => {
+const WorkoutDay: NextPage<Props> = ({ profile, workout }) => {
   const [checkboxState, setcheckboxState] = useState(
     {} as Record<string, boolean>
   );
@@ -30,12 +34,19 @@ const WorkoutDay: NextPage<Props> = ({ workout }) => {
   const handleSubmit = useCallback(
     async (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault();
-      // TODO: mark workout as complete
-
+      await fetch(`/api/profile/${profile.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          currentDay: parseInt(day as string, 10),
+        }),
+      });
       // navigate back to the home page
       router.push('/');
     },
-    [router]
+    [day, profile, router]
   );
 
   const renderRepsLabel = useCallback((type: Exercise, reps: number) => {
@@ -95,17 +106,50 @@ const WorkoutDay: NextPage<Props> = ({ workout }) => {
   );
 };
 
-WorkoutDay.getInitialProps = async (ctx: NextPageContext) => {
-  const { day } = ctx.query;
-  const dayInt = parseInt(day as string, 10);
+export async function getServerSideProps(context: NextPageContext) {
+  const session = await getSession(context);
 
-  if (dayInt > 30 && ctx.res) {
-    ctx.res.writeHead(302, { Location: '/404' });
-    ctx.res.end();
-    return {};
+  // redirects to the signin page if no session exists
+  if (!session) {
+    return {
+      redirect: {
+        destination: '/auth/signin',
+      },
+    };
   }
-  const workout = ROUTINE_SCHEDULE[dayInt - 1];
-  return { workout };
-};
+
+  // redirect to 404 page if user tries to access workout beyond 30 days
+  const { day } = context.query;
+  const dayInt = parseInt(day as string, 10);
+  if (dayInt > 30) {
+    return {
+      redirect: {
+        destination: '/404',
+      },
+    };
+  }
+
+  // find user based on email
+  const user = await prisma.user.findUnique({
+    where: {
+      email: session.user?.email as string,
+    },
+    include: {
+      profile: true,
+    },
+  });
+
+  if (!user) {
+    // TODO: we're in a weird place here where the user was not created yet despite being authenticated
+    return { props: {} };
+  }
+
+  return {
+    props: {
+      profile: JSON.parse(JSON.stringify(user.profile)),
+      workout: ROUTINE_SCHEDULE[dayInt - 1],
+    },
+  };
+}
 
 export default WorkoutDay;
