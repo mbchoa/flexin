@@ -15,7 +15,7 @@ const ProgressGrid = ({ currentDay }: Props) => {
         if (index === currentDay) {
           color = 'bg-green-300 animate-pulse';
         }
-        return <div className={`h-0 pb-[100%] ${color}`} key={index} />;
+        return <div className={`aspect-square ${color}`} key={index} />;
       })}
     </div>
   );

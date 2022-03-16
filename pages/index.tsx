@@ -16,8 +16,8 @@ interface Props {
 const Home: NextPage<Props> = ({ profile }) => {
   const router = useRouter();
   const [currentDay, setCurrentDay] = useState(profile.currentDay);
+  const [startDate, setStartDate] = useState(profile.startDate);
 
-  const { startDate } = profile;
   const hasStartedRoutine = startDate && new Date(startDate) <= new Date();
 
   const handleSubmit = useCallback(
@@ -49,9 +49,11 @@ const Home: NextPage<Props> = ({ profile }) => {
       },
       body: JSON.stringify({
         currentDay: 0,
+        startDate: null,
       }),
     });
     setCurrentDay(0);
+    setStartDate(null);
   }, [profile.id]);
 
   return (
@@ -76,13 +78,15 @@ const Home: NextPage<Props> = ({ profile }) => {
           >
             {hasStartedRoutine ? 'Continue' : 'Start!'}
           </button>
-          <button
-            className="bg-red-600 text-white font-bold py-2 px-4 rounded hover:bg-red-500 transition-colors"
-            type="button"
-            onClick={handleRestart}
-          >
-            Restart
-          </button>
+          {hasStartedRoutine && (
+            <button
+              className="bg-red-600 text-white font-bold py-2 px-4 rounded hover:bg-red-500 transition-colors"
+              type="button"
+              onClick={handleRestart}
+            >
+              Restart
+            </button>
+          )}
         </form>
       </main>
     </div>
