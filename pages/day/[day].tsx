@@ -3,6 +3,7 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { getSession } from 'next-auth/react';
 import { Profile } from '@prisma/client';
+import { useMutation } from 'react-query';
 
 import { ROUTINE_SCHEDULE, PLANK, PUSHUP } from '../../constants';
 import { NextPage, NextPageContext } from 'next';
@@ -21,6 +22,26 @@ const WorkoutDay: NextPage<Props> = ({ profile, workout }) => {
   const router = useRouter();
   const { day } = router.query;
 
+  const mutation = useMutation<Profile, unknown, { currentDay: number }>(
+    async (updatedProfile) => {
+      const response = await fetch(`/api/profile/${profile.id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedProfile),
+      });
+      const newProfile = await response.json();
+      return newProfile;
+    },
+    {
+      onSuccess: () => {
+        // navigate back to the home page
+        router.push('/');
+      },
+    }
+  );
+
   const handleCheckboxChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       setcheckboxState({
@@ -34,19 +55,9 @@ const WorkoutDay: NextPage<Props> = ({ profile, workout }) => {
   const handleSubmit = useCallback(
     async (event: FormEvent<HTMLFormElement>) => {
       event.preventDefault();
-      await fetch(`/api/profile/${profile.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          currentDay: parseInt(day as string, 10),
-        }),
-      });
-      // navigate back to the home page
-      router.push('/');
+      mutation.mutate({ currentDay: parseInt(day as string, 10) });
     },
-    [day, profile, router]
+    [day, mutation]
   );
 
   const renderRepsLabel = useCallback((type: Exercise, reps: number) => {
@@ -60,6 +71,7 @@ const WorkoutDay: NextPage<Props> = ({ profile, workout }) => {
 
   const checkboxStateValues = Object.values(checkboxState);
   const isSubmitDisabled =
+    mutation.isLoading ||
     checkboxStateValues.length < workout.sets.length ||
     checkboxStateValues.some((isChecked) => !isChecked);
 
@@ -92,7 +104,7 @@ const WorkoutDay: NextPage<Props> = ({ profile, workout }) => {
             ))}
           </div>
           <button
-            className={`text-white font-bold py-2 px-4 rounded ${
+            className={`text-white font-bold py-2 px-4 rounded flex justify-center ${
               isSubmitDisabled
                 ? 'bg-gray-500 cursor-not-allowed'
                 : 'bg-blue-600 cursor-pointer'
@@ -100,7 +112,30 @@ const WorkoutDay: NextPage<Props> = ({ profile, workout }) => {
             type="submit"
             disabled={isSubmitDisabled}
           >
-            Save
+            {mutation.isLoading ? (
+              <svg
+                className="animate-spin h-6 w-6 text-white"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle
+                  className="opacity-25"
+                  cx="12"
+                  cy="12"
+                  r="10"
+                  stroke="currentColor"
+                  strokeWidth="4"
+                ></circle>
+                <path
+                  className="opacity-75"
+                  fill="currentColor"
+                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                ></path>
+              </svg>
+            ) : (
+              'Save'
+            )}
           </button>
         </form>
       </main>

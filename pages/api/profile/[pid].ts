@@ -16,7 +16,7 @@ export default async function handle(
   }
 
   switch (req.method) {
-    case 'PUT': {
+    case 'PATCH': {
       const profile = await prisma.profile.update({
         where: { id: profileId },
         data: req.body,

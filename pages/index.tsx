@@ -26,7 +26,7 @@ const Home: NextPage<Props> = ({ profile }) => {
       if (!hasStartedRoutine) {
         // update profile start date to today's date
         await fetch(`/api/profile/${profile.id}`, {
-          method: 'PUT',
+          method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
           },
@@ -43,7 +43,7 @@ const Home: NextPage<Props> = ({ profile }) => {
 
   const handleRestart = useCallback(async () => {
     await fetch(`/api/profile/${profile.id}`, {
-      method: 'PUT',
+      method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
       },
