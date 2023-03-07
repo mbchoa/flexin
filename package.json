@@ -33,7 +33,7 @@
     "@types/nodemailer": "^6.4.4",
     "@types/react": "17.0.39",
     "autoprefixer": "^10.4.2",
-    "commitizen": "^4.2.4",
+    "commitizen": "^4.3.0",
     "cz-conventional-changelog": "^3.3.0",
     "eslint": "8.10.0",
     "eslint-config-next": "12.1.0",
